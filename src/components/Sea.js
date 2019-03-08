@@ -6,28 +6,26 @@ export default class Sea{
         this.createGeometry();
         this.createMaterial();
         this.createMesh();
-        return this.seaMesh;
+        return this.mesh;
     }
 
     createGeometry(){
-        this.seaGeometry = new THREE.CylinderGeometry(800,800,800,40,10);
-        this.seaGeometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+        this.geometry = new THREE.CylinderGeometry(800,800,800,40,10);
+        this.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 
     }
 
     createMaterial(){
-        this.seaMaterial = new THREE.MeshNormalMaterial();
-        //     new THREE.MeshPhongMaterial({
-        //     color:this.colors.blue,
-        //     // color:this.colors.blue,
-        //     transparent:true,
-        //     opacity:.6,
-        //     shading:THREE.FlatShading,
-        // })
+        this.material = new THREE.MeshPhongMaterial({
+            color:this.colors.blue,
+            transparent:true,
+            opacity:.6,
+            shading:THREE.FlatShading
+         })
     }
 
     createMesh(){
-        this.seaMesh = new THREE.Mesh(this.seaGeometry, this.seaMaterial);
-        this.seaMesh.receiveShadow = true;
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
     }
 }
