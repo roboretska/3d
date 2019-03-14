@@ -15,12 +15,14 @@ class App extends Component {
             pink:0xF5986E,
             brownDark:0x23190f,
             blue:0x68c3c0,
+            blue_magenta: 0x3500d3,
+            cornflower_blue: 0x7391c8
         };
     }
 
     createScene(){
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
+        this.scene.fog = new THREE.Fog(0x819ABD, 100, 950);
     }
 
     createCamera()  {
@@ -276,7 +278,7 @@ class Airplane {
         this.cabinGeometry.vertices[7].y += 30;
         this.cabinGeometry.vertices[7].z -= 20;
 
-        this.cabinMaterial = new THREE.MeshPhongMaterial({color:this.colors.red, shading:THREE.FlatShading})
+        this.cabinMaterial = new THREE.MeshPhongMaterial({color:this.colors.cornflower_blue, shading:THREE.FlatShading})
         this.cabinMesh = new THREE.Mesh(this.cabinGeometry, this.cabinMaterial);
         this.cabinMesh.castShadow = true;
         this.cabinMesh.receiveShadow = true;
@@ -289,14 +291,29 @@ class Airplane {
         this.engineMesh.receiveShadow = true;
 
         this.tailGeometry = new THREE.BoxGeometry(15,20,5,1,1,1);
-        this.tailMaterial = new THREE.MeshPhongMaterial({color:this.colors.red, shading:THREE.FlatShading});
+        this.tailMaterial = new THREE.MeshPhongMaterial({color:this.colors.cornflower_blue, shading:THREE.FlatShading});
         this.tailMesh = new THREE.Mesh(this.tailGeometry, this.tailMaterial);
         this.tailMesh.position.set(-30,15,0);
         this.tailMesh.receiveShadow = true;
         this.tailMesh.castShadow = true;
 
+        this.tailplaneGeometry = new THREE.BoxGeometry(8, 4, 45, 1 ,1 ,1);
+        this.tailplane = new THREE.Mesh(this.tailplaneGeometry, this.tailMaterial);
+
+        this.tailMesh.add(this.tailplane);
+
         this.wingGeometry = new THREE.BoxGeometry(40,8,150,1,1,1);
-        this.wingMaterial = new THREE.MeshPhongMaterial({color:this.colors.red, shading:THREE.FlatShading});
+
+        this.wingGeometry.vertices[0].y += 1;
+        this.wingGeometry.vertices[1].y += 1;
+        this.wingGeometry.vertices[2].y -= 1;
+        this.wingGeometry.vertices[3].y -= 1;
+        this.wingGeometry.vertices[4].y -= 3;
+        this.wingGeometry.vertices[5].y -= 3;
+        this.wingGeometry.vertices[6].y += 3;
+        this.wingGeometry.vertices[7].y += 3;
+
+        this.wingMaterial = new THREE.MeshPhongMaterial({color:this.colors.cornflower_blue, shading:THREE.FlatShading});
         this.wingMesh = new THREE.Mesh(this.wingGeometry, this.wingMaterial);
         this.wingMesh.castShadow = true;
         this.wingMesh.receiveShadow = true;
@@ -318,11 +335,22 @@ class Airplane {
         this.propellerMesh.add(this.bladeMesh);
         this.propellerMesh.position.set(50, 0, 0);
 
+        this.chassisGeometry = new THREE.BoxGeometry(7, 15, 5, 1, 1, 1);
+        this.chassisMaterial = new THREE.MeshPhongMaterial({color:this.colors.cornflower_blue, shading:THREE.FlatShading});
+        this.chassis = new THREE.Mesh(this.chassisGeometry, this.chassisMaterial);
+
+        this.wheelGeometry = new THREE.BoxGeometry(15, 15, 3, 1, 1, 1);
+        this.wheelMaterial = new THREE.MeshPhongMaterial({color:this.colors.brownDark, shading:THREE.FlatShading});
+        this.wheel = new THREE.Mesh(this.wheelGeometry, this.wheelMaterial);
+        this.wheel.position.y = -5;
+
+        this.chassis.add(this.wheel);
+        this.chassis.position.set(-5, -15, 0);
+
         this.pilot = new Pilot(this.colors);
         this.pilot.mesh.position.set(5, 35, 0);
 
-        this.mesh.add(this.cabinMesh, this.engineMesh, this.tailMesh, this.wingMesh, this.propellerMesh, this.pilot.mesh);
-        // return this.mesh;
+        this.mesh.add(this.cabinMesh, this.engineMesh, this.tailMesh, this.wingMesh, this.propellerMesh, this.pilot.mesh, this.chassis);
     }
 
 }
