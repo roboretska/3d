@@ -113,11 +113,18 @@ class App extends Component {
         this.plane.pilot.updateHair();
     }
 
+    initStars(){
+        this.stars = new Stars();
+        console.log(this.stars)
+        this.scene.add(this.stars)
+    }
+
     animate(){
         requestAnimationFrame(this.animate.bind(this))
         this.renderer.render(this.scene, this.camera);
         this.updatePlane();
         this.sky.rotation.z += 0.0025;
+        this.stars.rotation.z += 0.0025;
         this.seaMesh.rotation.z += 0.0025;
         this.sea.moveWaves();
     }
@@ -137,6 +144,7 @@ class App extends Component {
         this.initSea();
         this.initSky();
         this.initPlane();
+        this.initStars();
         this.renderer.render(this.scene, this.camera);
         window.addEventListener('mousemove', this.mouseMoveHandler.bind(this), false);
         this.animate();
@@ -278,6 +286,8 @@ class Airplane {
         this.cabinGeometry.vertices[7].y += 30;
         this.cabinGeometry.vertices[7].z -= 20;
 
+        console.log(this.cabinGeometry);
+
         this.cabinMaterial = new THREE.MeshPhongMaterial({color:this.colors.cornflower_blue, shading:THREE.FlatShading})
         this.cabinMesh = new THREE.Mesh(this.cabinGeometry, this.cabinMaterial);
         this.cabinMesh.castShadow = true;
@@ -298,6 +308,16 @@ class Airplane {
         this.tailMesh.castShadow = true;
 
         this.tailplaneGeometry = new THREE.BoxGeometry(8, 4, 45, 1 ,1 ,1);
+
+        this.tailplaneGeometry.vertices[4].y -= 2;
+        this.tailplaneGeometry.vertices[4].z += 2;
+        this.tailplaneGeometry.vertices[5].y -= 2;
+        this.tailplaneGeometry.vertices[5].z -= 2;
+        this.tailplaneGeometry.vertices[6].y += 2;
+        this.tailplaneGeometry.vertices[6].z += 2;
+        this.tailplaneGeometry.vertices[7].y += 2;
+        this.tailplaneGeometry.vertices[7].z -= 2;
+
         this.tailplane = new THREE.Mesh(this.tailplaneGeometry, this.tailMaterial);
 
         this.tailMesh.add(this.tailplane);
@@ -436,6 +456,38 @@ class  Pilot {
         this.angleHairs += 0.16;
     }
     
+}
+
+class Stars{
+    constructor(){
+        const count = 1000;
+        this.mesh = new THREE.Object3D();
+        this.stepAngle = Math.PI*2  / count;
+
+        this.starGeometry = new THREE.SphereGeometry(1, 50, 50);
+        this.starMaterial = new THREE.MeshPhysicalMaterial({color: 0xfffff0, shininess: 90});
+
+        for (let i = 0; i<count; i++){
+            const starMesh = new THREE.Mesh(this.starGeometry, this.starMaterial);
+            const finalCloudAngle = this.stepAngle * i;
+            const high = 150 + Math.random() * 200;
+
+            const coordinates = this.calculateCoordinates(finalCloudAngle, high);
+            starMesh.position.set(coordinates.x, coordinates.y, coordinates.z);
+            this.mesh.add(starMesh);
+        }
+        this.mesh.y = -100;
+        return this.mesh;
+    }
+
+    calculateCoordinates(finalCloudAngle, high){
+        let x, y, z;
+        y = Math.sin(finalCloudAngle) * high + 100; //converting from polar to Cartesian coordinates
+        x = Math.cos(finalCloudAngle) * high;
+        z = 100 - Math.random() * 400;
+
+        return {x, y, z};
+    }
 }
 
 export default App;
